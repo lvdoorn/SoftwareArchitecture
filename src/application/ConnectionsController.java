@@ -29,11 +29,11 @@ public class ConnectionsController implements Initializable {
 	@FXML
 	private Button searchButton;
 	
-	private ArrayList<String> stops = DatabaseConnector.loadAllStops();
+	private ArrayList<String> stopNames = DatabaseConnector.loadStopNames();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		ObservableList<String> obsList = FXCollections.observableArrayList(stops);
+		ObservableList<String> obsList = FXCollections.observableArrayList(stopNames);
 		firstChoice.setItems(obsList);
 		secondChoice.setItems(obsList);
 		firstChoice.setPlaceholder(new Label("No stops to show"));

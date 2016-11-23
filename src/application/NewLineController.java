@@ -26,13 +26,13 @@ public class NewLineController implements Initializable {
 	@FXML private Button addButton;
 	@FXML private Label resultMessage;
 	
-	private ArrayList<String> stops = DatabaseConnector.loadAllStops();
+	private ArrayList<String> stopNames = DatabaseConnector.loadStopNames();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		VBox vbox = new VBox();
 		ArrayList<CheckBox> boxes = new ArrayList<>();
-		for (String s : stops) {
+		for (String s : stopNames) {
 			boxes.add(new CheckBox(s));
 		}
 		for (int i = 0; i < boxes.size(); i++) {

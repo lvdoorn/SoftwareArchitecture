@@ -17,6 +17,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -25,7 +27,10 @@ import javafx.scene.input.KeyEvent;
 
 public class BrowseController implements Initializable {
 
-	@FXML private TextArea stopList;
+	@FXML private TableView<Stop> stopList;
+	@FXML private TableColumn<Stop, String> nameCol;
+	@FXML private TableColumn<Stop, Double> latCol;
+	@FXML private TableColumn<Stop, Double> lonCol;
 	@FXML private CheckBox nameCheck;
 	@FXML private TextField nameInput;
 	@FXML private CheckBox longitudeCheck;
@@ -36,15 +41,15 @@ public class BrowseController implements Initializable {
 	@FXML private RadioButton latitudeAbove;
 	@FXML private Button refreshButton;
 
-	private ArrayList<String> stops = DatabaseConnector.loadAllStops();
+	private ArrayList<Stop> stops = DatabaseConnector.loadAllStops();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		stopList.setText(""); // add stops to TextArea
-		for (String s : stops) {
-			stopList.appendText(s + '\n');
-		}
-		stopList.positionCaret(0); // scrolls to top
+		ObservableList<Stop> data = FXCollections.observableArrayList(stops);
+		nameCol.setCellValueFactory(new PropertyValueFactory<Stop, String>("name"));
+		lonCol.setCellValueFactory(new PropertyValueFactory<Stop, Double>("lon"));
+		latCol.setCellValueFactory(new PropertyValueFactory<Stop, Double>("lat"));
+		stopList.setItems(data);
 	}
 
 	/**
@@ -58,25 +63,44 @@ public class BrowseController implements Initializable {
 	 * @param lat
 	 *            Latitude double value, ignored if latitude equals ""
 	 * @param long
-	 *            Longtitude double value, ignored if longitude equals ""
+	 *            Longitude double value, ignored if longitude equals ""
 	 */
 	private void refreshStops(String name, String latitude, String longitude, double lat, double lon) {
-		CopyOnWriteArrayList<String> clone = new CopyOnWriteArrayList<>(stops);
+		CopyOnWriteArrayList<Stop> clone = new CopyOnWriteArrayList<>(stops);
 		if (nameCheck.isSelected() && !name.equals("")) {
-			for (String s : clone) {
-				if (!s.matches("(?i).*" + name + ".*")) { // case-insensitive
+			for (Stop s : clone) {
+				if (!s.getName().matches("(?i).*" + name + ".*")) { // case-insensitive
 					clone.remove(s);
 				}
 			}
 		}
-		stopList.setText("");
-		for (String s : clone) {
-			stopList.appendText(s + '\n');
+		if (longitude.equals("above")) {
+			for (Stop s : clone) {
+				if (s.getLon() < lon) {
+					clone.remove(s);
+				}
+			}
+		} else if (longitude.equals("below")) {
+			for (Stop s : clone) {
+				if (s.getLon() > lon) {
+					clone.remove(s);
+				}
+			}
 		}
-		stopList.selectPositionCaret(0); // scroll to top
-		stopList.deselect();
-
-		// TODO: handle latitude and longitude
+		if (latitude.equals("above")) {
+			for (Stop s : clone) {
+				if (s.getLat() < lat) {
+					clone.remove(s);
+				}
+			}
+		} else if (latitude.equals("below")) {
+			for (Stop s : clone) {
+				if (s.getLat() > lon) {
+					clone.remove(s);
+				}
+			}
+		}
+		stopList.setItems(FXCollections.observableArrayList(clone));
 	}
 
 	public void liveRefreshStops(KeyEvent event) {
@@ -93,7 +117,15 @@ public class BrowseController implements Initializable {
 		name = nameInput.getText();
 		if (latitudeCheck.isSelected()) {
 			if (!latitudeInput.getText().equals("")) {
-				lat = Double.parseDouble(latitudeInput.getText());
+				try {
+					lat = Double.parseDouble(latitudeInput.getText());
+				} catch (NumberFormatException e) {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Invalid input");
+					alert.setHeaderText("The input to field latitude is not valid.");
+					alert.setContentText("Make sure to use a period for decimals.");
+					alert.showAndWait();
+				}
 			}
 			if (latitudeAbove.isSelected()) {
 				latitude = "above";
@@ -103,7 +135,15 @@ public class BrowseController implements Initializable {
 		}
 		if (longitudeCheck.isSelected()) {
 			if (!longitudeInput.getText().equals("")) {
-				lon = Double.parseDouble(longitudeInput.getText());
+				try {
+					lon = Double.parseDouble(longitudeInput.getText());
+				} catch (NumberFormatException e) {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Invalid input");
+					alert.setHeaderText("The input to field longitude is not valid.");
+					alert.setContentText("Make sure to use a period for decimals.");
+					alert.showAndWait();
+				}
 			}
 			if (longitudeAbove.isSelected()) {
 				longitude = "above";
