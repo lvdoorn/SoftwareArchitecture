@@ -64,5 +64,8 @@ public class NewLineController implements Initializable {
 				pause.play();
 			}
 		}
+		for (CheckBox b : boxes) {
+			b.setSelected(false);
+		}
 	}
 }
