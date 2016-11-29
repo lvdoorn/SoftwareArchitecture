@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.BrowseController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1095.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.BrowseController">
 	<children>
 		<CheckBox fx:id="nameCheck" layoutX="984.0" layoutY="73.0" mnemonicParsing="false" text="Name" />
 		<TextField fx:id="nameInput" layoutX="1084.0" layoutY="68.0" onKeyTyped="#liveRefreshStops" promptText="Search..." />
@@ -30,11 +30,12 @@
 		</RadioButton>
 		<RadioButton fx:id="latitudeBelow" layoutX="984.0" layoutY="284.0" mnemonicParsing="false" text="Below" toggleGroup="$latitude" />
 		<Button fx:id="refreshButton" layoutX="987.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleRefreshAction" prefHeight="31.0" prefWidth="288.0" text="Refresh" />
-      <TableView fx:id="stopList" layoutX="60.0" layoutY="62.0" prefHeight="514.0" prefWidth="816.0">
+      <TableView fx:id="stopList" layoutX="39.0" layoutY="65.0" prefHeight="514.0" prefWidth="890.0">
         <columns>
-          <TableColumn fx:id="nameCol" prefWidth="406.0" text="Name" />
-          <TableColumn fx:id="lonCol" prefWidth="205.0" text="Longitude" />
-            <TableColumn fx:id="latCol" prefWidth="204.0" text="Latitude" />
+          <TableColumn fx:id="nameCol" prefWidth="320.0" text="Name" />
+          <TableColumn fx:id="lonCol" prefWidth="150.0" text="Longitude" />
+            <TableColumn fx:id="latCol" prefWidth="150.0" text="Latitude" />
+            <TableColumn fx:id="idCol" minWidth="0.0" prefWidth="270.0" text="ID" />
         </columns>
       </TableView>
 	</children>

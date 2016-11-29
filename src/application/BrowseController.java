@@ -1,28 +1,17 @@
 package application;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
-import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.input.KeyEvent;
 
 public class BrowseController implements Initializable {
@@ -31,6 +20,7 @@ public class BrowseController implements Initializable {
 	@FXML private TableColumn<Stop, String> nameCol;
 	@FXML private TableColumn<Stop, Double> latCol;
 	@FXML private TableColumn<Stop, Double> lonCol;
+	@FXML private TableColumn<Stop, Integer> idCol;
 	@FXML private CheckBox nameCheck;
 	@FXML private TextField nameInput;
 	@FXML private CheckBox longitudeCheck;
@@ -49,6 +39,7 @@ public class BrowseController implements Initializable {
 		nameCol.setCellValueFactory(new PropertyValueFactory<Stop, String>("name"));
 		lonCol.setCellValueFactory(new PropertyValueFactory<Stop, Double>("lon"));
 		latCol.setCellValueFactory(new PropertyValueFactory<Stop, Double>("lat"));
+		idCol.setCellValueFactory(new PropertyValueFactory<Stop, Integer>("id"));
 		stopList.setItems(data);
 	}
 

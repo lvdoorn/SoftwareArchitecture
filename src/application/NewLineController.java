@@ -1,43 +1,68 @@
 package application;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
-import javafx.collections.transformation.SortedList;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class NewLineController implements Initializable {
-	
+
 	@FXML private ScrollPane scrollPane;
 	@FXML private Button addButton;
 	@FXML private Label resultMessage;
-	
-	private ArrayList<String> stopNames = DatabaseConnector.loadStopNames();
-	
+	@FXML private Label successLabel;
+	@FXML private TextField routeName;
+
+	private ArrayList<Stop> stops = DatabaseConnector.loadAllStops();
+	private ArrayList<CheckBox> boxes;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		Collections.sort(stops);
 		VBox vbox = new VBox();
-		ArrayList<CheckBox> boxes = new ArrayList<>();
-		for (String s : stopNames) {
-			boxes.add(new CheckBox(s));
+		boxes = new ArrayList<>();
+		for (Stop s : stops) {
+			boxes.add(new CheckBox(s.getName() + " " + s.getId()));
 		}
 		for (int i = 0; i < boxes.size(); i++) {
 			vbox.getChildren().add(boxes.get(i));
 		}
 		scrollPane.setContent(vbox);
+	}
+
+	public void handleAddEvent(ActionEvent e) {
+		ArrayList<Stop> selectedStops = new ArrayList<>();
+		for (CheckBox b : boxes) {
+			if (b.isSelected()) {
+				selectedStops.add(DatabaseConnector.getStopById(b.getText()));
+			}
+		}
+		if (selectedStops.size() < 2) {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Not enough stops");
+			alert.setHeaderText("You have not selected enough stops for a new line");
+			alert.setContentText("Select two or more stops");
+			alert.showAndWait();
+		} else {
+			String name = routeName.getText();
+			if (name.equals("")) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Empty name");
+				alert.setHeaderText("You have not put in a name");
+				alert.showAndWait();
+			} else {
+				DatabaseConnector.insertRoute(name, selectedStops);
+				successLabel.setVisible(true);
+				PauseTransition pause = new PauseTransition(Duration.seconds(5));
+				pause.setOnFinished(event -> successLabel.setVisible(false));
+				pause.play();
+			}
+		}
 	}
 }
