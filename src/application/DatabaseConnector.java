@@ -20,7 +20,24 @@ public class DatabaseConnector {
 	private static final String QUERY_INSERT_ID_ID = "INSERT INTO mapping VALUES (%d, %d)";
 	private static final String QUERY_INSERT_ID_STRING = "INSERT INTO routes VALUES (%d, '%s')";
 
-	public static void connect() {
+	private static DatabaseConnector instance;
+
+	/**
+	 * Private constructor for singleton design pattern.
+	 */
+	private DatabaseConnector() {
+
+	}
+
+	public static DatabaseConnector getInstance() {
+		if (instance == null) {
+			instance = new DatabaseConnector();
+			instance.connect();
+		}
+		return instance;
+	}
+
+	private void connect() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/softarch", "root", "test");
@@ -34,13 +51,14 @@ public class DatabaseConnector {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Gets stop by id in the form of "name id"
+	 * 
 	 * @param name
 	 * @return
 	 */
-	public static Stop getStopById(String name) {
+	public Stop getStopById(String name) {
 		if (stops == null) {
 			loadAllStops();
 		}
@@ -53,7 +71,7 @@ public class DatabaseConnector {
 		return null;
 	}
 
-	public static Stop getStopById(int id) {
+	public Stop getStopById(int id) {
 		if (stops == null) {
 			loadAllStops();
 		}
@@ -65,7 +83,7 @@ public class DatabaseConnector {
 		return null;
 	}
 
-	public static Stop getStopByName(String name) {
+	public Stop getStopByName(String name) {
 		if (stops == null) {
 			loadAllStops();
 		}
@@ -77,7 +95,7 @@ public class DatabaseConnector {
 		return null;
 	}
 
-	public static ArrayList<Integer> loadStopIds() {
+	public ArrayList<Integer> loadStopIds() {
 		if (stops == null) {
 			loadAllStops();
 		}
@@ -88,7 +106,7 @@ public class DatabaseConnector {
 		return res;
 	}
 
-	public static ArrayList<String> loadStopNames() {
+	public ArrayList<String> loadStopNames() {
 		if (stops == null) {
 			loadAllStops();
 		}
@@ -99,7 +117,7 @@ public class DatabaseConnector {
 		return res;
 	}
 
-	public static ArrayList<String> checkRoute(Stop s1, Stop s2) {
+	public ArrayList<String> checkRoute(Stop s1, Stop s2) {
 		ArrayList<String> result = new ArrayList<String>();
 		try {
 			Statement stmt = conn.createStatement();
@@ -115,7 +133,7 @@ public class DatabaseConnector {
 		return result;
 	}
 
-	public static ArrayList<Stop> loadAllStops() {
+	public ArrayList<Stop> loadAllStops() {
 		if (stops != null) {
 			return stops;
 		}
@@ -139,7 +157,7 @@ public class DatabaseConnector {
 		return stops;
 	}
 
-	public static void insertRoute(String name, ArrayList<Stop> routeStops) {
+	public void insertRoute(String name, ArrayList<Stop> routeStops) {
 		try {
 			ResultSet rs1 = conn.createStatement().executeQuery(QUERY_MAX_MAPPING);
 			ResultSet rs2 = conn.createStatement().executeQuery(QUERY_MAX_ROUTES);
@@ -150,7 +168,6 @@ public class DatabaseConnector {
 			rs2.close();
 			int newId = maxRouteId + 1;
 			for (Stop s : routeStops) {
-				System.out.println(String.format(QUERY_INSERT_ID_ID, newId, s.getId()));
 				conn.createStatement().execute(String.format(QUERY_INSERT_ID_ID, newId, s.getId()));
 			}
 			StringBuilder sb = new StringBuilder(name);
@@ -160,7 +177,6 @@ public class DatabaseConnector {
 				sb.append(" => ");
 				sb.append(routeStops.get(i).getName());
 			}
-			System.out.println(String.format(QUERY_INSERT_ID_STRING, newId, sb));
 			conn.createStatement().execute(String.format(QUERY_INSERT_ID_STRING, newId, sb));
 		} catch (Exception e) {
 			e.printStackTrace();

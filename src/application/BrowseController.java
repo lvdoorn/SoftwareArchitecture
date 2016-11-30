@@ -31,7 +31,8 @@ public class BrowseController implements Initializable {
 	@FXML private RadioButton latitudeAbove;
 	@FXML private Button refreshButton;
 
-	private ArrayList<Stop> stops = DatabaseConnector.loadAllStops();
+	private DatabaseConnector dbc = DatabaseConnector.getInstance();
+	private ArrayList<Stop> stops = dbc.loadAllStops();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -144,5 +145,4 @@ public class BrowseController implements Initializable {
 		}
 		refreshStops(name, latitude, longitude, lat, lon);
 	}
-
 }

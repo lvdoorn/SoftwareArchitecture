@@ -19,7 +19,8 @@ public class NewLineController implements Initializable {
 	@FXML private Label successLabel;
 	@FXML private TextField routeName;
 
-	private ArrayList<Stop> stops = DatabaseConnector.loadAllStops();
+	private DatabaseConnector dbc = DatabaseConnector.getInstance();
+	private ArrayList<Stop> stops = dbc.loadAllStops();
 	private ArrayList<CheckBox> boxes;
 
 	@Override
@@ -40,7 +41,7 @@ public class NewLineController implements Initializable {
 		ArrayList<Stop> selectedStops = new ArrayList<>();
 		for (CheckBox b : boxes) {
 			if (b.isSelected()) {
-				selectedStops.add(DatabaseConnector.getStopById(b.getText()));
+				selectedStops.add(dbc.getStopById(b.getText()));
 			}
 		}
 		if (selectedStops.size() < 2) {
@@ -57,7 +58,7 @@ public class NewLineController implements Initializable {
 				alert.setHeaderText("You have not put in a name");
 				alert.showAndWait();
 			} else {
-				DatabaseConnector.insertRoute(name, selectedStops);
+				dbc.insertRoute(name, selectedStops);
 				successLabel.setVisible(true);
 				PauseTransition pause = new PauseTransition(Duration.seconds(5));
 				pause.setOnFinished(event -> successLabel.setVisible(false));
