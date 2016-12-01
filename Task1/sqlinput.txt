@@ -1,0 +1,7 @@
+DROP DATABASE IF EXISTS Softarch;
+CREATE DATABASE Softarch;
+USE Softarch;
+CREATE TABLE Restaurants(id int, longtitude double, latitude double, name varchar(255), type varchar(255));
+LOAD DATA LOCAL INFILE 'restaurants.csv' INTO TABLE Restaurants;
+CREATE TABLE Stops(id int, longtitude double, latitude double, name varchar(255));
+LOAD DATA LOCAL INFILE 'stops.csv' INTO TABLE Stops;

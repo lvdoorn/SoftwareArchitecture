@@ -1,0 +1,2 @@
+osmfilter austria-latest.osm --keep="amenity=restaurant" --keep="amenity=bar" --keep="amenity=biergarten" --keep="amenity=cafe" --keep="amenity=fast-food" --keep="amenity=pub" | osmconvert -B=Graz.poly - \
+| osmconvert --all-to-nodes --csv="@id @lon @lat name" --csv-headline - | grep $'.*\t.*\t.*\t.' > restaurants.csv && mysql -u root --local-infile < sqlinput.txt

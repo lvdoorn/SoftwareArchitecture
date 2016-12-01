@@ -1,0 +1,2 @@
+osmfilter austria-latest.osm --keep="railway=tram_stop" --keep="highway=bus_stop" | osmconvert -B=Graz.poly - | osmconvert --all-to-nodes --csv="@id @lon @lat name" --csv-headline - \
+| grep $'.*\t.*\t.*\t.' > stops.csv
